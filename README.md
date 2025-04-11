@@ -24,9 +24,11 @@ docker run -ti --name tensorrt --network=host --gpus all --runtime=nvidia \
 
 2. Build the plugin with the following commands:
 ```shell
-mkdir build && cd build
+mkdir -p build
+cd build
 cmake .. -DTensorRT_ROOT=/usr/local/tensorrt -DCMAKE_BUILD_TYPE=Release
 make
+cp -f libgrid_sample_3d_plugin.so ../../bin/
 ```
  
 ### Usage 

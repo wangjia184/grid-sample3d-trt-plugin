@@ -381,7 +381,6 @@ const char *GridSample3DPluginCreator::getPluginNamespace() const noexcept
     return mNamespace.c_str();
 }
 
-#if (TENSORRT_VERSION >= 100000)
 extern "C" TENSORRTAPI IPluginCreatorInterface *const *getCreators(int32_t &nbCreators)
 {
     nbCreators = 1;
@@ -390,13 +389,10 @@ extern "C" TENSORRTAPI IPluginCreatorInterface *const *getCreators(int32_t &nbCr
     return kPLUGIN_CREATOR_LIST;
 }
 
-#endif
-
 extern "C" TENSORRTAPI void setLoggerFinder(nvinfer1::ILoggerFinder *finder)
 {
 }
 
-#if (TENSORRT_VERSION < 100100)
 extern "C" TENSORRTAPI IPluginCreator *const *getPluginCreators(int32_t &nbCreators)
 {
     nbCreators = 1;
@@ -404,6 +400,5 @@ extern "C" TENSORRTAPI IPluginCreator *const *getPluginCreators(int32_t &nbCreat
     static IPluginCreator *const kPLUGIN_CREATOR_LIST[] = {&sRoiAlignCreator};
     return kPLUGIN_CREATOR_LIST;
 }
-#endif
 
 REGISTER_TENSORRT_PLUGIN(GridSample3DPluginCreator);

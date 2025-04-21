@@ -31,11 +31,21 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
 
 target_include_directories(${PROJECT_NAME} PRIVATE "./src" ${CUDAToolkit_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    nvinfer 
-    nvinfer_plugin
-    nvonnxparser
-    nvinfer_vc_plugin
-    nvinfer_dispatch
+    nvinfer_static
+    nvinfer_plugin_static
+    nvonnxparser_static
+    onnx_proto
+    nvinfer_vc_plugin_static
+    nvinfer_dispatch_static
+    nvinfer_lean_static
+
+    nvrtc_static
+    nvrtc-builtins_static
+    nvptxcompiler_static
+    nvJitLink_static
+
+    -static-libgcc
+    -static-libstdc++
 )
 
 

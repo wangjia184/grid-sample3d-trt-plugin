@@ -29,7 +29,11 @@ link_directories(
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
 
-target_include_directories(${PROJECT_NAME} PRIVATE "./src" ${CUDAToolkit_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    "./src" 
+    /usr/local/tensorrt/include/
+    ${CUDAToolkit_INCLUDE_DIRS}
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     nvinfer_static
     nvinfer_plugin_static

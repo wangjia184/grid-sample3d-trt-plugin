@@ -21,10 +21,10 @@ file(GLOB CU_SOURCE "./src/*.cu")
 message(STATUS "CUDAToolkit_INCLUDE_DIRS: ${CUDAToolkit_INCLUDE_DIRS}")
 
 link_directories(
-    /usr/local/tensorrt/lib/
-    /usr/local/tensorrt/lib/stubs/
-    /usr/local/cuda-12.6/targets/x86_64-linux/lib/
-    /usr/local/cuda-12.6/targets/x86_64-linux/lib/stubs/
+    /usr/local/tensorrt/targets/x86_64-linux-gnu/lib/
+    /usr/local/tensorrt/targets/x86_64-linux-gnu/lib/stubs/
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/stubs/
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
@@ -32,24 +32,25 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
 target_include_directories(${PROJECT_NAME} PRIVATE 
     "./src" 
     /usr/local/tensorrt/include/
+    /usr/local/cuda-12.9/targets/x86_64-linux/include/
     ${CUDAToolkit_INCLUDE_DIRS}
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    nvinfer_static
-    nvinfer_plugin_static
-    nvonnxparser_static
+    nvinfer
+    nvinfer_plugin
+    nvonnxparser
     onnx_proto
-    nvinfer_vc_plugin_static
-    nvinfer_dispatch_static
-    nvinfer_lean_static
+    nvinfer_vc_plugin
+    nvinfer_dispatch
+    nvinfer_lean
 
-    nvrtc_static
-    nvrtc-builtins_static
-    nvptxcompiler_static
-    nvJitLink_static
-
-    -static-libgcc
-    -static-libstdc++
+    nvrtc
+    nvrtc-builtins
+    #nvrtc_static
+    #nvrtc-builtins_static
+    #nvptxcompiler
+    nvJitLink
+ 
 )
 
 

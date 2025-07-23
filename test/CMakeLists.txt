@@ -14,12 +14,12 @@ add_executable(${TEST_GRID_SAMPLE} test.cpp)
 target_include_directories(${TEST_GRID_SAMPLE} PUBLIC 
     ${PROJECT_INCLUDE_DIR} 
     ${CUDA_ROOT}/include
-    /usr/local/cuda-12.6/targets/x86_64-linux/include/
+    /usr/local/cuda-12.9/targets/x86_64-linux/include/
 )
 
 link_directories(
-    /usr/local/cuda-12.6/targets/x86_64-linux/lib/
-    /usr/local/cuda-12.6/targets/x86_64-linux/lib/stubs/
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/
+    /usr/local/cuda-12.9/targets/x86_64-linux/lib/stubs/
     /usr/local/tensorrt/lib/
     /usr/local/tensorrt/lib/stubs/
 )

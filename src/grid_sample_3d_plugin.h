@@ -1,154 +1,133 @@
+#pragma once
+
 #include <string>
 #include <vector>
 
+#include <NvInfer.h>
 #include <NvInferPlugin.h>
 
-#include <grid_sample_3d.h>
+#include <grid_sample_3d.h> // your CUDA kernel declarations
 
 #ifndef GRID_SAMPLE_3D_PLUGIN
 #define GRID_SAMPLE_3D_PLUGIN
 
-using namespace nvinfer1::plugin;
+using namespace nvinfer1;
 
-namespace nvinfer1 {
+namespace nvinfer1
+{
+    namespace plugin
+    {
 
-namespace plugin {
+        class GridSample3DPlugin : public IPluginV3,
+                                   public IPluginV3OneCore,
+                                   public IPluginV3OneBuild,
+                                   public IPluginV3OneRuntime
+        {
+        public:
+            GridSample3DPlugin(const std::string name,
+                               size_t inputChannel,
+                               size_t inputDepth,
+                               size_t inputHeight,
+                               size_t inputWidth,
+                               size_t gridDepth,
+                               size_t gridHeight,
+                               size_t gridWidth,
+                               bool alignCorners,
+                               GridSample3DInterpolationMode interpolationMode,
+                               GridSample3DPaddingMode paddingMode,
+                               nvinfer1::DataType dataType);
 
-class GridSample3DPlugin : public IPluginV2DynamicExt{
+            GridSample3DPlugin(const std::string name,
+                               bool alignCorners,
+                               GridSample3DInterpolationMode interpolationMode,
+                               GridSample3DPaddingMode paddingMode);
 
-public:
+            GridSample3DPlugin(const std::string name,
+                               const void *buffer,
+                               size_t buffer_size);
 
-    GridSample3DPlugin(const std::string name,
-                       size_t inputChannel,
-                       size_t inputDepth,
-                       size_t inputHeight, 
-                       size_t inputWidth,
-                       size_t gridDepth,
-                       size_t gridHeight,
-                       size_t gridWidth,
-                       bool alignCorners,
-                       GridSample3DInterpolationMode interpolationMode,
-                       GridSample3DPaddingMode paddingMode,
-                       nvinfer1::DataType dataType);
+            GridSample3DPlugin() = delete;
+            ~GridSample3DPlugin() noexcept override;
 
-    GridSample3DPlugin(const std::string name,
-                       bool alignCorners,
-                       GridSample3DInterpolationMode interpolationMode,
-                       GridSample3DPaddingMode paddingMode);
+            // IPluginV3
+            IPluginCapability *getCapabilityInterface(PluginCapabilityType type) noexcept override;
+            IPluginV3 *clone() noexcept override;
 
-    GridSample3DPlugin(const std::string name,
-                       const void* buffer, 
-                       size_t buffer_size);
+            // IPluginV3OneBuild methods (build-time capabilities)
+            int32_t getNbOutputs() const noexcept override;
+            int32_t getOutputDataTypes(
+                DataType *outputTypes, int32_t nbOutputs, const DataType *inputTypes, int32_t nbInputs) const noexcept override;
+            int32_t getOutputShapes(DimsExprs const *inputs, int32_t nbInputs, DimsExprs const *shapeInputs, int32_t nbShapeInputs,
+                                    DimsExprs *outputs, int32_t nbOutputs, IExprBuilder &exprBuilder) noexcept override;
 
-    GridSample3DPlugin() = delete;
-    ~GridSample3DPlugin() override;
+            bool supportsFormatCombination(int32_t pos, DynamicPluginTensorDesc const *inOut, int32_t nbInputs, int32_t nbOutputs) noexcept override;
+            int32_t configurePlugin(DynamicPluginTensorDesc const *in,
+                                    int32_t nbInputs,
+                                    DynamicPluginTensorDesc const *out,
+                                    int32_t nbOutputs) noexcept override;
+            int32_t getWorkspaceSize(PluginTensorDesc const *inputs,
+                                     int32_t nbInputs,
+                                     PluginTensorDesc const *outputs,
+                                     int32_t nbOutputs) const noexcept;
 
-    // IPluginV2DynamicExt Methods
-    nvinfer1::IPluginV2DynamicExt* clone() const noexcept override;
+            // IPluginV3OneRuntime methods (runtime capabilities)
+            int32_t onShapeChange(PluginTensorDesc const *in,
+                                  int32_t nbInputs,
+                                  PluginTensorDesc const *out,
+                                  int32_t nbOutputs) noexcept override;
+            int32_t enqueue(PluginTensorDesc const *inputDesc,
+                            PluginTensorDesc const *outputDesc,
+                            void const *const *inputs,
+                            void *const *outputs,
+                            void *workspace,
+                            cudaStream_t stream) noexcept override;
+            IPluginV3 *attachToContext(IPluginResourceContext *context) noexcept override;
 
-    nvinfer1::DimsExprs getOutputDimensions(int32_t outputIndex, 
-                                            DimsExprs const* inputs, 
-                                            int32_t nbInputs, 
-                                            IExprBuilder& exprBuilder) noexcept override;
+            // IPluginV3OneCore methods (core capabilities)
+            const AsciiChar *getPluginName() const noexcept override;
+            const AsciiChar *getPluginVersion() const noexcept override;
+            const AsciiChar *getPluginNamespace() const noexcept override;
+            void setPluginNamespace(AsciiChar const *pluginNamespace) noexcept;
+            size_t getSerializationSize() const noexcept;
+            void serialize(void *buffer) const noexcept;
+            void destroy() noexcept;
 
-    bool supportsFormatCombination(int32_t pos, 
-                                   PluginTensorDesc const* inOut, 
-                                   int32_t nbInputs, 
-                                   int32_t nbOutputs) noexcept override;
+            nvinfer1::PluginFieldCollection const *getFieldsToSerialize() noexcept override;
 
-    void configurePlugin(DynamicPluginTensorDesc const* in, 
-                         int32_t nbInputs,
-                         DynamicPluginTensorDesc const* out, 
-                         int32_t nbOutputs) noexcept override;
+        private:
+            // internal parameters
+            const std::string mLayerName;
+            size_t mBatch;
+            size_t mInputChannel, mInputDepth, mInputWidth, mInputHeight;
+            size_t mGridDepth, mGridWidth, mGridHeight;
+            bool mAlignCorners;
+            std::string mNameSpace;
+            GridSample3DInterpolationMode mInterpolationMode;
+            GridSample3DPaddingMode mPaddingMode;
+            nvinfer1::DataType mDataType;
+        };
 
-    size_t getWorkspaceSize(PluginTensorDesc const* inputs, 
-                            int32_t nbInputs, 
-                            PluginTensorDesc const* outputs,
-                            int32_t nbOutputs) const noexcept override;
+        class GridSample3DPluginCreator : public IPluginCreatorV3One
+        {
+        public:
+            GridSample3DPluginCreator();
+            ~GridSample3DPluginCreator() noexcept override;
 
-    int32_t enqueue(PluginTensorDesc const* inputDesc, 
-                    PluginTensorDesc const* outputDesc,
-                    void const* const* inputs, 
-                    void* const* outputs, 
-                    void* workspace, 
-                    cudaStream_t stream) noexcept override;
+            // IPluginCreatorV3One methods
+            IPluginV3 *createPlugin(AsciiChar const *name, PluginFieldCollection const *fc, TensorRTPhase phase) noexcept override;
+            PluginFieldCollection const *getFieldNames() noexcept override;
+            AsciiChar const *getPluginName() const noexcept override;
+            AsciiChar const *getPluginVersion() const noexcept override;
+            void setPluginNamespace(AsciiChar const *libNamespace) noexcept;
+            AsciiChar const *getPluginNamespace() const noexcept override;
 
-    // IPluginV2Ext Methods
-    nvinfer1::DataType getOutputDataType(int32_t index, 
-                                         nvinfer1::DataType const* inputTypes, 
-                                         int32_t nbInputs) const noexcept override;
-    void attachToContext(cudnnContext* cudnnContext, 
-                         cublasContext* cublasContext, 
-                         IGpuAllocator* gpuAllocator) noexcept override;
+        private:
+            std::string mNamespace;
+            static PluginFieldCollection mFC;
+            static std::vector<PluginField> mPluginAttributes;
+        };
 
-    void detachFromContext() noexcept override;
-
-    // IPluginV2 Methods
-    const char* getPluginType() const noexcept override;
-
-    const char* getPluginVersion() const noexcept override;
-
-    int32_t getNbOutputs() const noexcept override;
-
-    int32_t initialize() noexcept override;
-
-    void terminate() noexcept override;
-
-    size_t getSerializationSize() const noexcept override;
-
-    void serialize(void* buffer) const noexcept override;
-
-    void destroy() noexcept override;
-
-    void setPluginNamespace(const char* pluginNamespace) noexcept override;
-
-    const char* getPluginNamespace() const noexcept override;
-
-private:
-
-    const std::string mLayerName;
-    size_t mBatch;
-    size_t mInputChannel, mInputDepth, mInputWidth, mInputHeight;
-    size_t mGridDepth, mGridWidth, mGridHeight;
-    bool mAlignCorners;
-    std::string mNameSpace;
-    GridSample3DInterpolationMode mInterpolationMode;
-    GridSample3DPaddingMode mPaddingMode;
-    nvinfer1::DataType mDataType;
-
-};
-
-class GridSample3DPluginCreator : public IPluginCreator {
-
-public:
-    GridSample3DPluginCreator();
-    ~GridSample3DPluginCreator() override;
-
-    const char* getPluginName() const noexcept override;
-
-    const char* getPluginVersion() const noexcept override;
-
-    const PluginFieldCollection* getFieldNames() noexcept override;
-
-    IPluginV2* createPlugin(const char* name, 
-                            const PluginFieldCollection* fc) noexcept override;
-
-    IPluginV2* deserializePlugin(const char* name, 
-                                 const void* serialData, 
-                                 size_t serialLength) noexcept override;
-
-    void setPluginNamespace(const char* libNamespace) noexcept override;
-
-    const char* getPluginNamespace() const noexcept override;
-
-private:
-    std::string mNamespace;
-    static PluginFieldCollection mFC;
-    static std::vector<PluginField> mPluginAttributes;
-};
-
-} // namespace plugin
-
+    } // namespace plugin
 } // namespace nvinfer1
 
 #endif // GRID_SAMPLE_3D_PLUGIN

@@ -23,8 +23,8 @@ message(STATUS "CUDAToolkit_INCLUDE_DIRS: ${CUDAToolkit_INCLUDE_DIRS}")
 link_directories(
     /usr/local/tensorrt/targets/x86_64-linux-gnu/lib/
     /usr/local/tensorrt/targets/x86_64-linux-gnu/lib/stubs/
-    /usr/local/cuda-12.9/targets/x86_64-linux/lib/
-    /usr/local/cuda-12.9/targets/x86_64-linux/lib/stubs/
+    /usr/local/cuda-13.1/targets/x86_64-linux/lib/
+    /usr/local/cuda-13.1/targets/x86_64-linux/lib/stubs/
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
@@ -32,7 +32,7 @@ add_library(${PROJECT_NAME} SHARED ${SOURCES} ${CU_SOURCE})
 target_include_directories(${PROJECT_NAME} PRIVATE 
     "./src" 
     /usr/local/tensorrt/include/
-    /usr/local/cuda-12.9/targets/x86_64-linux/include/
+    /usr/local/cuda-13.1/targets/x86_64-linux/include/
     ${CUDAToolkit_INCLUDE_DIRS}
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE 
@@ -55,7 +55,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "70;80;86;89")
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "80;86;89;90;100")
 
 add_subdirectory(test)
 enable_testing()

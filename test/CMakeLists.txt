@@ -14,12 +14,12 @@ add_executable(${TEST_GRID_SAMPLE} test.cpp)
 target_include_directories(${TEST_GRID_SAMPLE} PUBLIC 
     ${PROJECT_INCLUDE_DIR} 
     ${CUDA_ROOT}/include
-    /usr/local/cuda-12.9/targets/x86_64-linux/include/
+    /usr/local/cuda-13.1/targets/x86_64-linux/include/
 )
 
 link_directories(
-    /usr/local/cuda-12.9/targets/x86_64-linux/lib/
-    /usr/local/cuda-12.9/targets/x86_64-linux/lib/stubs/
+    /usr/local/cuda-13.1/targets/x86_64-linux/lib/
+    /usr/local/cuda-13.1/targets/x86_64-linux/lib/stubs/
     /usr/local/tensorrt/lib/
     /usr/local/tensorrt/lib/stubs/
 )
@@ -32,4 +32,4 @@ target_link_libraries(${TEST_GRID_SAMPLE} PRIVATE
     
 )
 
-set_target_properties(${TEST_GRID_SAMPLE} PROPERTIES CUDA_ARCHITECTURES "70;80;86;89")
+set_target_properties(${TEST_GRID_SAMPLE} PROPERTIES CUDA_ARCHITECTURES "80;86;89;90;100")

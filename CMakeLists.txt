@@ -25,6 +25,8 @@ link_directories(
     /usr/local/tensorrt/targets/x86_64-linux-gnu/lib/stubs/
     /usr/local/cuda-13.1/targets/x86_64-linux/lib/
     /usr/local/cuda-13.1/targets/x86_64-linux/lib/stubs/
+    /usr/local/cuda-13.0/targets/x86_64-linux/lib/
+    /usr/local/cuda-13.0/targets/x86_64-linux/lib/stubs/
     /usr/local/cuda-12.9/targets/x86_64-linux/lib/
     /usr/local/cuda-12.9/targets/x86_64-linux/lib/stubs/
 )
@@ -35,6 +37,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     "./src" 
     /usr/local/tensorrt/include/
     /usr/local/cuda-13.1/targets/x86_64-linux/include/
+    /usr/local/cuda-13.0/targets/x86_64-linux/include/
     /usr/local/cuda-12.9/targets/x86_64-linux/include/
     ${CUDAToolkit_INCLUDE_DIRS}
 )

@@ -61,7 +61,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "80;86;89;90;100")
+set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_ARCHITECTURES "80;86;89;90;100;110;120")
 
 add_subdirectory(test)
 enable_testing()
